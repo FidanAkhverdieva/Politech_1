@@ -1,0 +1,330 @@
+# Лабораторная №3
+
+
+#  1) Создайте класс для банковского счета
+#  с методами пополнения, снятия и проверки баланса.
+
+
+class Account:
+    def __init__(myaccount):
+        myaccount.balance = 0
+
+    def deposit(myaccount):
+        amount = float(input("Внести сумму на карту: "))
+        myaccount.balance += amount
+        print("\n Вы внесли :" + str(amount) + " рублей")
+
+    def withdraw(myaccount):
+        amount = float(input("Сумма для списания: "))
+        if myaccount.balance >= amount:
+            myaccount.balance -= amount
+            print("\n Вы сняли:" + str(amount) + " рублей")
+        else:
+            print("\n Недостаточно  ")
+
+    def display(myaccount):
+        print("\n Ваш баланс составляет=" + str(myaccount.balance) + " рублей")
+
+
+# Driver code
+
+# creating an object of class
+s = Account()
+s.balance
+s.deposit()
+s.withdraw()
+s.display()
+
+
+
+# 2) Создайте класс для автомобиля с методами запуска, остановки и подачи сигнала.
+
+
+class Car:
+	def __init__(mycar):
+		mycar.pozition=0
+	def carsignal(self):
+		print("\n Машина подает сигнал ")
+	def carstop(self):
+		print("\n Машина остановилась ")
+	def cargoing(mycar):
+		speed=float(input("Скорость машины: "))
+		mycar.pozition += speed
+		if speed>0:
+			print("\n Машина едит со скоростью :"+str(speed)+" км/час")
+		else:
+			mycar.carstop()
+car=Car()
+car.carsignal()
+car.cargoing()
+car.carstop()
+
+
+
+# 3) Создайте класс для человека с атрибутами для имени, возраста и адреса.
+class Human:
+    def __init__(self, name, age, address):
+        self.name = name
+        self.age = age
+        self.address = address
+
+    name = "Me"
+    age = 19
+    address = "Saint Petersburg"
+    print("\nИмя: " + name + "\nВозраст: " + str(age) + "\nАдрес: " + address)
+
+# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+
+
+# 4) Создайте класс для университета с атрибутами имени, адреса и студентов.
+class University:
+    def __init__(self, name, address, students):
+        self.name = name
+        self.address = address
+        self.students = students
+
+    name = "СПб Политехнический"
+    address = "м. Политехническая"
+    students = ["A", "B"]
+    print("\nИмя: " + name + "\nАдрес: " + address + "\nСтуденты: ")
+    print(*students)
+
+
+# 5) Создайте класс для прямоугольника с атрибутами длины и ширины и методами вычисления площади и периметра.
+from turtle import width
+
+
+class Rectangle:
+
+    def __init__(self, height, width):
+        self.height = height
+        self.width = width
+
+    def square(self):
+        print("Площадь равна ", self.height * self.width)
+
+    def perimeter(self):
+        print("Периметр прямоугольника ", 2 * (self.height + self.width))
+
+
+r = Rectangle(15, 15)
+r.square()
+r.perimeter()
+
+
+
+# 6) Создайте класс для корзины покупок с методами добавления и удаления товаров и расчета общей стоимости.
+class ShoppingCart:
+	def __init__(self):
+		self.cart = []  # инициализируем пустой список для товаров в корзине
+
+	def add_item(self, item):
+		"""
+		Метод для добавления товара в корзину
+		:param item: словарь, представляющий товар, например {'name': 'apple', 'price': 0.50}
+		"""
+		self.cart.append(item)
+		print("{0} has been added".format(item['name']))
+
+	def remove_item(self, item):
+		"""
+		Метод для удаления товара из корзины
+		:param item: словарь, представляющий товар, например {'name': 'apple', 'price': 0.50}
+		"""
+		try:
+			self.cart.remove(item)
+			print("{0} has been removed".format(item['name']))
+		except ValueError:
+			print("{0} not found in the cart".format(item['name']))
+
+	def calculate_total(self):
+		"""
+		Метод для расчета общей стоимости товаров в корзине
+		"""
+		total = sum(item['price'] for item in self.cart)  # суммируем цены всех товаров в корзине
+		print("Total price: {0:.2f}".format(total))  # выводим общую стоимость в формате денежной суммы
+
+def main():
+	cart = ShoppingCart()
+	cart.add_item({'name' : 'banana', 'price': 25})
+	cart.add_item({'name' : 'apple', 'price': 34})
+	cart.add_item({'name' : 'juice', 'price': 100})
+	
+	cart.calculate_total()
+	
+	cart.remove_item({'name' : 'banana', 'price': 25})
+
+	cart.calculate_total()
+
+
+if __name__ == "__main__":
+	main()
+
+
+
+# 7) Создайте класс для игры с атрибутами для имени игрока, очков, жизней и уровня.
+# Класс должен содержать методы для:
+# a)	Запуска, завершения и перезапуска игры
+# b)	Получения очков (при наборе определённого количества очков уровень должен увеличиться на 1)
+# c)	Потери жизней (при достижении нуля жизней должна появиться надпись Game Over). При перезапуске игры жизни восстанавливаются.
+
+class Game:
+    def __init__(self, player_name):
+        self.player_name = player_name
+        self.score = 0
+        self.lives = 3
+        self.level = 1
+        self.game_over = False
+
+    def start_game(self):
+        self.game_over = False
+        print("Game started!")
+
+    def end_game(self):
+        self.game_over = True
+        print("Game over!")
+
+    def restart_game(self):
+        self.score = 0
+        self.lives = 3
+        self.level = 1
+        self.game_over = False
+        print("Game restarted!")
+
+    def add_score(self, points):
+        self.score += points
+        if self.score >= self.level * 10:
+            self.level += 1
+            print(f"New level: {self.level}.")
+
+    def lose_life(self):
+        self.lives -= 1
+        print(f"Lives: {self.lives}.")
+        if self.lives == 0:
+            self.end_game()
+
+    def get_status(self):
+        print(f"Player: {self.player_name}")
+        print(f"Score: {self.score}")
+        print(f"Lives: {self.lives}")
+        print(f"Level: {self.level}")
+
+def main():
+	game = Game("John")
+	game.get_status()  
+	game.start_game()  
+	game.add_score(5)  
+	game.add_score(10) 
+	game.lose_life()   
+	game.add_score(10) 
+	game.add_score(10) 
+	game.lose_life()   
+	game.lose_life()   
+	game.get_status()  
+	game.end_game()    
+	game.restart_game()
+	game.get_status()  
+        
+if __name__ == "__main__":
+    main()
+
+
+
+#8) Задание по библиотекам docx и python-docx
+#(пример итогового файла в demo.docx): написать код, который будет
+#создавать файл Word, где обязательно должны быть:
+#a)	Заголовки двух или трёх разных уровней
+#b)	Обычный текст, полужирный шрифт и курсив
+#c)	Подчёркнутый текст
+#d)	Нумерованный или ненумерованный список
+#e)	Изображения
+
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Import docx NOT python-docx
+import docx
+from docx.shared import Inches
+
+from docx.enum.text import WD_UNDERLINE
+
+# Create an instance of a word document
+doc = docx.Document()
+
+# Add a heading of level 0 (Also called Title)
+doc.add_heading('Спортивные мячи ', 0)
+
+shrift=doc.add_paragraph('''Мячи, в основном,  ''')
+shrift.add_run('''Используются ''').bold=True
+shrift.add_run('''В играх ''').italic=True
+# Add a heading of level 1
+doc.add_heading('Волейбол', 1)
+shrift1=doc.add_paragraph('')
+shrift1.add_run('''Мяч состоит из панелей кожи, натянутой вокруг каркаса ''').font.underline = True
+
+# Add a heading of level 2
+doc.add_heading('Футбол', 2)
+
+# Add a heading of level 3
+doc.add_heading('Басктебол', 3)
+
+
+doc.add_heading('Рейтинг ', 3)
+# Adding points to the list named 'List Number'
+doc.add_paragraph('На первом месте по популярности в мире футбол (соккер), у него 4 миллиарда поклонников.',
+                  style='List Number')
+
+doc.add_paragraph('На пятом — волейбол — 900 миллионов поклонников. \nНа седьмом месте — баскетбол — 825 миллионов поклонников',
+                  style='List Number')
+
+
+doc.add_picture('volleyball.png', width=Inches(2),height=Inches(2))
+doc.add_picture('football.png', width=Inches(2),height=Inches(2))
+doc.add_picture('basketball.png', width=Inches(2),height=Inches(2))
+
+# Now save the document to a location
+doc.save('file.docx')
+
+
+
+# 9) Задание по openpyxl: с помощью openpyxl написать код, который будет создавать какую-либо матрицу товаров
+# (пример в stationery.xlsx) и в последнем столбце автоматически рассчитывать итоговую стоимость для каждой строки
+# (кол-во товара*цену за единицу).
+
+import openpyxl
+
+def create_excel_file(filename, headers, data):
+    """
+    Создает новый файл Excel и заполняет его данными из переданных заголовков и данных.
+    :param filename: имя файла, в который будут записаны данные
+    :param headers: список заголовков столбцов
+    :param data: список данных в формате кортежей, где каждый кортеж содержит значения для каждого столбца
+    """
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+
+    # записываем заголовки
+    for col_num, header in enumerate(headers, start=1):
+        sheet.cell(row=1, column=col_num).value = header
+
+    # записываем данные и рассчитываем последний столбец
+    for row_num, row_data in enumerate(data, start=2):
+        for col_num, cell_data in enumerate(row_data, start=1):
+            sheet.cell(row=row_num, column=col_num).value = cell_data
+
+        # рассчитываем общую стоимость и записываем ее в последний столбец
+        total_cost = row_data[2] * row_data[3]
+        sheet.cell(row=row_num, column=len(row_data)+1).value = total_cost
+
+    workbook.save(filename)
+
+
+# пример использования функции
+headers = ['Название', 'Артикул', 'Количество', 'Цена', 'Общая стоимость']
+data = [
+    ('Карандаш простой', 'a859', 5, 22.8),
+    ('Ручка гелевая', 'b427', 3, 15.5),
+    ('Бумага для принтера', 'c905', 2, 650),
+    ('Клей для бумаги', 'd212', 1, 78.5),
+]
+create_excel_file('products.xlsx', headers, data)
