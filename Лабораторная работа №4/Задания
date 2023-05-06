@@ -1,0 +1,125 @@
+Лабораторная работа №4
+
+МАШИННОЕ ОБУЧЕНИЕ
+
+
+5. Научиться работать с библиотекой natasha. Задачи:
+
+i.	Загрузить текстовые данные (не менее 2000 символов)
+ii.	Разделить текст на предложения
+iii.	Выделить токены и провести частеречную разметку, вывести на экран первые 20 токенов с тэгами
+iv.	Нормализовать именованные сущности в тексте
+v.	Выделить даты и вывести их в формате число-месяц-год
+
+ import natasha
+from natasha import NewsEmbedding
+from natasha import NewsMorphTagger
+from  natasha import Segmenter
+from natasha import Doc
+from natasha import MorphVocab
+from natasha import NewsNERTagger
+from razdel import tokenize, sentenize
+from natasha import DatesExtractor
+text1 = 'ДЕМИАН История юности, написанная Эмилем Синклером Я ведь всего только и хотел попытаться жить тем, что само ' \
+        'рвалось из меня наружу. Почему же это было так трудно? Чтобы рассказать мою историю, мне надо начать издалека. ' \
+        'Мне следовало бы, будь это возможно, вернуться гораздо дальше назад, в самые первые годы моего детства, и еще ' \
+        'дальше, в даль моего происхождения. Писатели, когда они пишут романы, делают вид, будто они Господь Бог и могут' \
+        ' целиком охватить и понять какую-то человеческую историю, могут изобразить ее так, как если бы ее рассказывал ' \
+        'себе сам Господь Бог, без всякого тумана, только существенное. Я так не могу, да и писатели тоже не могут. Но ' \
+        'мне моя история важнее, чем какому-нибудь писателю его история; ибо это моя собственная история, а значит, ' \
+        'история человека не выдуманного, возможного, идеального или еще как-либо не существующего, а настоящего, ' \
+        'единственного в своем роде, живого человека. Что это такое, настоящий живой человек, о том, правда, сегодня ' \
+        'знают меньше, чем когда-либо, и людей, каждый из которых есть драгоценная, единственная в своем роде попытка ' \
+        'природы, убивают сегодня скопом. Если бы мы не были еще чем-то большим, чем единственными в своем роде людьми, ' \
+        'если бы нас действительно можно было полностью уничтожить пулей, то рассказывать истории не было бы уже смысла.' \
+        ' Но каждый человек – это не только он сам, это еще и та единственная в своем роде, совершенно особенная, в ' \
+        'каждом случае важная и замечательная точка, где скрещиваются явления мира так – только однажды и никогда больше.' \
+        ' Поэтому история каждого человека важна, вечна, божественна, поэтому каждый человек, пока он жив и исполняет ' \
+        'волю природы, чудесен и достоин всяческого внимания. В каждом приобрел образ дух, в каждом страдает живая тварь,' \
+        ' в каждом распинают Спасителя. Мало кто знает сегодня, что такое человек. Многие чувствуют это, и потому им ' \
+        'легче умирать, как и мне будет легче умереть, когда допишу эту историю. Знающим я назвать себя не смею. Я был ' \
+        'ищущим и все еще остаюсь им, но ищу я уже не на звездах и не в книгах, я начинаю слышать то, чему учит меня ' \
+        'шумящая во мне кровь. Моя история лишена приятности, в ней нет милой гармонии выдуманных историй, она отдает ' \
+        'бессмыслицей и душевной смутой, безумием и бредом, как жизнь всех, кто уже не хочет обманываться.'
+
+#2
+sentens = list(sentenize(text1))
+s=Segmenter()
+tokens=list(tokenize(text1))
+print(sentens)
+print(tokens)
+
+#3
+segmenter = Segmenter()
+
+emb = NewsEmbedding()
+morph_tagger = NewsMorphTagger(emb)
+doc = Doc(text1)
+doc.segment(segmenter)
+doc.tag_morph(morph_tagger)
+l=list(doc.tokens)
+for token in l[:20]:
+    print(token.pos, token.text)
+#4
+morphvocab=MorphVocab()
+ner_tagger = NewsNERTagger(emb)
+doc.tag_ner(ner_tagger)
+for span in doc.spans:
+    span.normalize(morphvocab)
+print(doc.spans)
+ #5
+dates=DatesExtractor(morphvocab)
+facts = [_.fact.as_json for _ in dates(text1)]
+for f in facts:
+    print(f"{f.get('day')}-{f.get('month')}-{f.get('year')}")
+    
+    
+    6. Средствами NLTK выделить именованные сущности с тэгами (Person, Organisation, GSP и проч.) для английского и русского текста.  
+pip install svgling
+
+import nltk
+text = "'I cannot tell my story without going a long way back. If it were possible I would go back much farther still to' \
+the very earliest years of my childhood and beyond them to my family origins. When poets write novels they are apt to' \
+behave as if they were gods, with the power to look beyond and comprehend any human story and serve it up as if the' \
+Almighty himself, omnipresent, were relating it in all its naked truth. That I am no more able to do than the poets.'"
+for sent in nltk.sent_tokenize(text):
+   for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+      if hasattr(chunk, 'label'):
+         print(chunk)
+text2 = "'Я ведь всего только и хотел попытаться жить тем, что само ' \
+        'рвалось из меня наружу. Почему же это было так трудно? Чтобы рассказать мою историю, мне надо начать издалека. ' \
+        'Мне следовало бы, будь это возможно, вернуться гораздо дальше назад, в самые первые годы моего детства, и еще ' \
+        'дальше, в даль моего происхождения. Писатели, когда они пишут романы, делают вид, будто они Господь Бог и могут' \
+        ' целиком охватить и понять какую-то человеческую историю, могут изобразить ее так, как если бы ее рассказывал ' \
+        'себе сам Господь Бог, без всякого тумана, только существенное. '"
+for sent in nltk.sent_tokenize(text2):
+   for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+      if hasattr(chunk, 'label'):
+         print(chunk)
+
+
+7. С помощью sklearn обучить модель распознавать части речи в предложении. Для этого необходимо разбить данные на обучающую и тестовую выборки, а в конце вывести на экран предсказание модели и степень его точности.
+
+import -U scikit-learn
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+
+X_train = ["This is a positive text", "This is a negative text", "This is a neutral text"]
+y_train = ["positive", "negative", "neutral"]
+X_test = ["This is a positive text", "This is a negative text"]
+y_test = ['positive', 'negative']
+
+vectorizer = CountVectorizer()
+X_train_vectors = vectorizer.fit_transform(X_train)
+X_test_vectors = vectorizer.transform(X_test)
+
+clf = MultinomialNB()
+clf.fit(X_train_vectors, y_train)
+
+predicted = clf.predict(X_test_vectors)
+
+print(predicted)
+print("Accuracy: ", accuracy_score(predicted, y_test))
+
