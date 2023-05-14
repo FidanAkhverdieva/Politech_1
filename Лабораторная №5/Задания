@@ -1,0 +1,223 @@
+Лабораторная работа №5
+
+1.	Работа с изображениями:
+a)	Перевод в градации серого и в чёрно-белое изображение по порогу
+b)	Добавление надписей, кадрирование, изменение размера
+c)	Поворот изображения, размытие и сглаживание.
+
+import cv2
+#1
+# Load the image
+img = cv2.imread("image.jpg",1)
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Perform binary thresholding
+ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+
+# Show the original and thresholded images
+cv2.imshow("Original", img)
+cv2.imshow("Thresholded", thresh)
+cv2.waitKey(0)
+
+
+#2
+color_ = (0,200,120)
+text = cv2.putText(img, "Added text!", (200,150), cv2.FONT_HERSHEY_SIMPLEX, 1, color_, 2)
+cv2.imshow("Text", text)
+cv2.waitKey(0)
+cropped = img[0:700, 300:1200]
+cv2.imshow("Cropped image", cropped)
+cv2.waitKey(0)
+
+final_wide = 60
+k = float(final_wide) / img.shape[1]
+new_size = (final_wide, int(img.shape[0] * k))
+
+resized = cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
+cv2.imshow("Resize image", resized)
+cv2.waitKey(0)
+
+#3 c)	Поворот изображения, размытие и сглаживание
+flip_image = cv2.flip(img, 1)
+cv2.imshow("Flip image", flip_image)
+cv2.waitKey(0)
+gaus = cv2.GaussianBlur(img, (9, 9), 10)
+cv2.imshow("Gaussian blur", gaus)
+cv2.waitKey(0)
+kernelSizes = [(3, 3), (9, 9), (15, 15)]
+# loop over the kernel sizes
+for (kX, kY) in kernelSizes:
+	# apply an "average" blur to the image using the current kernel
+	# size
+    blurred = cv2.blur(img, (kX, kY))
+    cv2.imshow("Smoothing ({}, {})".format(kX, kY), blurred)
+    cv2.waitKey(0)
+    
+    
+    2. Распознавание лиц на фото. Написать алгоритм, который будет распознавать лица на фотографии, обводить их прямоугольными рамками и выводить количество 
+    найденных лиц. Использовать строку 
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+    
+    # Importing OpenCV package
+import cv2
+
+# Reading the image
+img = cv2.imread('image.jpg')
+
+# Converting image to grayscale
+gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Loading the required haar-cascade xml classifier file
+faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+# Applying the face detection method on the grayscale image
+facesrect = faceCascade.detectMultiScale(gray_img, 1.1, 9)
+
+# Iterating through rectangles of detected faces
+for (x, y, w, h) in facesrect:
+	cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
+cv2.imshow('Detected faces', img)
+
+print('Number of faces detected:', len(facesrect))
+cv2.waitKey(0)
+
+
+3. Рисование. С помощью opencv python написать функции, которые по действиям мыши будут рисовать фигуры или переключаться в режим свободного рисования. 
+Необходимо:
+i.	Создать пустое окно с чёрным фоном
+ii.	Реализовать функцию построения фигуры при двойном нажатии левой кнопки мыши
+iii.	Реализовать функцию свободного рисования при нажатии и удерживании правой кнопки (Подсказка: можно воспользоваться многократным повторением кругов с 
+маленьким диаметром и привязать его к движению мыши)
+iv.	*Дополнительные функции, если потребуются
+v.	Добавить подпись
+vi.	Реализовать прерывание программы и закрытие окна при нажатии клавиши ‘q’
+Возможные MOUSE_EVENTS: EVENT_LBUTTONDBLCLK, EVENT_RBUTTONDOWN, EVENT_RBUTTONUP, EVENT_MOUSEMOVE, EVENT_MBUTTONDBLCLK. 
+
+import cv2
+import numpy as np
+
+img = np.zeros((512, 512, 3), np.uint8)
+# Истинно при нажатии мыши
+drawing = False
+# Если режим true, нарисуйте прямоугольник. Нажмите 'm', чтобы изменить кривую.
+mode = True
+ix, iy = -1, -1
+
+
+# Создать функцию обратного вызова
+def draw_circle(event, x, y, flags, param):
+    global ix, iy, drawing, mode
+    # При нажатии левой кнопки, чтобы вернуться к координатам начальной позиции
+
+    if event == cv2.EVENT_LBUTTONDBLCLK:
+        cv2.circle(img, (x, y), 100, (255, 0, 0), -1)
+    elif event == cv2.EVENT_LBUTTONDOWN:
+        drawing = True
+        ix, iy = x, y
+    # Когда левая кнопка мыши нажата и перемещена для рисования графики. событие может проверить движение, флаг, чтобы увидеть, нажата ли она
+    elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_LBUTTON:
+        if drawing == True:
+            if mode == True:
+
+                cv2.circle(img, (x, y), 3, (0, 0, 255), -1)
+
+        # Остановить рисование, когда мышь отпущена.
+        elif event == cv2.EVENT_LBUTTONUP:
+            drawing == False
+# org
+org = (50, 50)
+
+# font
+font = cv2.FONT_HERSHEY_SIMPLEX
+# fontScale
+fontScale = 1
+
+# Blue color in BGR
+color = (255, 0, 0)
+
+# Line thickness of 2 px
+thickness = 2
+
+img = cv2.putText(img, 'OpenCV', org, font,
+                   fontScale, color, thickness, cv2.LINE_AA)
+cv2.namedWindow('image')
+cv2.setMouseCallback('image', draw_circle)
+while (1):
+    cv2.imshow('image', img)
+    k = cv2.waitKey(1) & 0xFF
+    # при нажатии кнопки q, окно закрывается
+    if k == ord('q'):
+        cv2.destroyAllWindows()
+        mode = not mode
+        break
+    elif k == 27:
+        break
+        
+        
+  
+  4. Работа с видео. 
+a)	Вариант 1 - Вырезать фрагмент видео (не в секундах, а в пикселях) и повернуть его на 90 градусов вправо.
+b)	Вариант 2 - Вырезать фрагмент видео, далее представить три окна: исходное видео в полном размере, фрагмент в версии RGB и фрагмент в оттенках серого.
+c)	Вариант 3 - Уменьшить размер видео, повернуть его на 180 градусов, вывести два окна: перевёрнутое видео и его версию в размытии.
+
+import cv2
+file = "Video.mp4" # путь к файлу с видео
+capture = cv2.VideoCapture(file)
+while(capture.isOpened()):
+    ret,frame = capture.read()
+    frame_re = frame[160:20, 140:400]
+    frame_re = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE )
+    cv2.imshow('frame',frame_re)
+    if cv2.waitKey(33) & 0xFF == ord('q'):
+        break
+capture.release()
+cv2.destroyAllWindows()
+
+
+5. Обнаружение движущихся объектов на видео. Задачи:
+a)	Окрыть видео в opencv
+b)	Использовать алгоритм вычитания фона (fgMask = bgSubtractor.apply) и морфологические операции для удаления шума
+c)	Настроить границы (контуры) прямоугольников или иных фигур вокруг движущихся объектов
+d)	Отобразить результат.
+
+
+import cv2
+
+# открыть видео
+cap = cv2.VideoCapture('Video.mp4')
+
+# объект для вычитания фона
+bgSubtractor = cv2.createBackgroundSubtractorMOG2()
+
+while cap.isOpened():
+    # считать кадр
+    ret, frame = cap.read()
+
+    if ret:
+        # применить вычитание фона
+        fgMask = bgSubtractor.apply(frame)
+
+        # удалить шум морфологическими операциями
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        fgMask = cv2.morphologyEx(fgMask, cv2.MORPH_OPEN, kernel)
+
+        # настроить границы объектов
+        contours, hierarchy = cv2.findContours(fgMask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        # отобразить результат
+        cv2.imshow('frame', frame)
+
+    # выход по нажатию клавиши 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# освободить ресурсы
+cap.release()
+cv2.destroyAllWindows()
+
