@@ -1,0 +1,40 @@
+# Курсовая работа
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import  numpy as np
+dataset = pd.read_csv('atp_tennis.csv')
+
+#фильтрация по дате
+dataset_filtered=dataset[(dataset['Date'] > '2008-01-15') &(dataset['Date'] < '2008-01-23')]
+print(dataset_filtered)
+
+agr=dataset_filtered.groupby(['Date']).agg({'Rank_1':np.max}).reset_index()
+print(agr)
+#  агрегация по имени победителя и  максимальному значению параметра Rank_2
+class SpotifyData:
+    def __init__(self, file_path):
+        self.df = pd.read_csv(file_path)
+
+    def filter_data(self):
+        self.df  = dataset[(dataset['Date'] > '2008-01-15') &(dataset['Date'] < '2008-01-23')]
+        self.df = self.df.groupby(['Date']).agg({'Rank_1':np.max}).reset_index()
+
+    def plot_data(self, x_col, y_col, pred_col=None):
+        plt.figure(figsize=(10, 5))
+        plt.plot(self.df[x_col], self.df[y_col], linewidth=2, label='Actual Data')
+        if pred_col:
+            plt.plot(self.df[x_col], self.df[pred_col], linewidth=2, label='Prediction')
+        plt.xlabel(x_col)
+        plt.ylabel(y_col)
+        plt.legend()
+        plt.show()
+spotify_data = SpotifyData('atp_tennis.csv')
+spotify_data.filter_data()
+spotify_data.plot_data('Date', 'Rank_1')
+
+plt.style.use("fivethirtyeight")
+dataset.plot(subplots=True, figsize=(12, 15))
+plt.show()
+predictions = model.predict(start=len(train_data), end=len(train_data) + len(test_data)-1)
+print(predictions)
