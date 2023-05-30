@@ -6,17 +6,17 @@ import matplotlib.pyplot as plt
 
 class DataSet:
     def __init__(self, dataset):
-        self.df = pd.read_csv(dataset)
+        self.df = pd.read_csv(dataset)#1 доступ к данным
         self.model = LinearRegression()
-
+#2 фильтрация и агрегация
     def filtering_aggregation(self, col_name, col2_name):
         self.df[col_name] = pd.to_datetime(self.df[col_name])  # приводим столбец Date к виду DateTime
-        self.df = self.df[(self.df[col_name] > '2008-01-15') & (self.df['Date'] < '2008-01-23')]
+        self.df = self.df[(self.df[col_name] > '2008-01-15') & (self.df[col_name] < '2008-01-23')]
         self.df = self.df.groupby([col_name]).agg({col2_name: 'max'}).reset_index()
-        print(self.df) 
+        print(self.df)
 
     def plotting(self, x_col, y_col, pred_col=None):
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(15, 9))
         plt.plot(self.df[x_col], self.df[y_col], linewidth=2, label='Actual Data')
         if pred_col:
             plt.plot(self.df[x_col], self.df[pred_col], linewidth=2, label='Prediction')
@@ -30,17 +30,23 @@ class DataSet:
         Y = self.df[y_col].values.reshape(-1, 1)
         self.model.fit(X, Y)
 
-    def prediction(self, x_col, new_data):
-        X_new = new_data.df[x_col].values.reshape(-1, 1)
-        y_new = self.model.predict(X_new)
-        new_data.df['Prediction'] = y_new
-        return new_data
+    def prediction(self, x_col, new_ds):
+        X_new = new_ds.df[x_col].values.reshape(-1, 1)
+        Y_new = self.model.predict(X_new)
+        new_ds.df['Prediction'] = Y_new
+        return new_ds
 
 
 ds = DataSet('atp_tennis.csv')
 ds.filtering_aggregation('Date', 'Rank_2')
 ds.plotting('Date', 'Rank_2')
 
+linear_model = ds.training('Date', 'Rank_2')
+
+new_ds = DataSet('atp_tennis.csv')
+new_ds.filtering_aggregation('Date', 'Rank_2')
+prediction = linear_model.predict_values('Date', new_ds)
+prediction.plotting('Date', 'Rank_2', 'Rank_2')
 linear_model = ds.train_model('Date', 'Rank_2')
 
 new_ds = DataSet('atp_tennis.csv')
