@@ -13,8 +13,7 @@ class DataSet:
         self.df[col_name] = pd.to_datetime(self.df[col_name])  # приводим столбец Date к виду DateTime
         self.df = self.df[(self.df[col_name] > '2008-01-15') & (self.df['Date'] < '2008-01-23')]
         self.df = self.df.groupby([col_name]).agg({col2_name: 'max'}).reset_index()
-        print(self.df)
-        # self.df = self.df.groupby(['track_add_time']).agg({'track_name': 'sum'}).reset_index()
+        print(self.df) 
 
     def plotting(self, x_col, y_col, pred_col=None):
         plt.figure(figsize=(10, 5))
