@@ -3,19 +3,20 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
+
 class DataSet:
     def __init__(self, dataset):
         self.df = pd.read_csv(dataset)
         self.model = LinearRegression()
 
-    def filtering_aggregation(self,col_name,col2_name):
-        self.df[col_name] = pd.to_datetime(self.df[col_name])#приводим столбец Date к виду DateTime
-        self.df=self.df[(self.df[col_name] > '2008-01-15') & (self.df['Date'] < '2008-01-23')]
-        self.df=self.df.groupby([col_name]).agg({col2_name:'max'}).reset_index()
+    def filtering_aggregation(self, col_name, col2_name):
+        self.df[col_name] = pd.to_datetime(self.df[col_name])  # приводим столбец Date к виду DateTime
+        self.df = self.df[(self.df[col_name] > '2008-01-15') & (self.df['Date'] < '2008-01-23')]
+        self.df = self.df.groupby([col_name]).agg({col2_name: 'max'}).reset_index()
         print(self.df)
-        #self.df = self.df.groupby(['track_add_time']).agg({'track_name': 'sum'}).reset_index()
+        # self.df = self.df.groupby(['track_add_time']).agg({'track_name': 'sum'}).reset_index()
 
-    def plot_data(self, x_col, y_col, pred_col=None):
+    def plotting(self, x_col, y_col, pred_col=None):
         plt.figure(figsize=(10, 5))
         plt.plot(self.df[x_col], self.df[y_col], linewidth=2, label='Actual Data')
         if pred_col:
@@ -24,22 +25,26 @@ class DataSet:
         plt.ylabel(y_col)
         plt.legend()
         plt.show()
+
     def training(self, x_col, y_col):
         X = self.df[x_col].values.reshape(-1, 1)
         Y = self.df[y_col].values.reshape(-1, 1)
         self.model.fit(X, Y)
+
     def prediction(self, x_col, new_data):
         X_new = new_data.df[x_col].values.reshape(-1, 1)
         y_new = self.model.predict(X_new)
         new_data.df['Prediction'] = y_new
-        return new_data 
-ds=DataSet('atp_tennis.csv')
-ds.filtering_aggregation('Date','Rank_2')
-ds.plot_data('Date','Rank_2') 
- 
-linear_model=ds.train_model('Date', 'Rank_2')
+        return new_data
+
+
+ds = DataSet('atp_tennis.csv')
+ds.filtering_aggregation('Date', 'Rank_2')
+ds.plotting('Date', 'Rank_2')
+
+linear_model = ds.train_model('Date', 'Rank_2')
 
 new_ds = DataSet('atp_tennis.csv')
-new_ds.filtering_aggregation('Date','Rank_2')
+new_ds.filtering_aggregation('Date', 'Rank_2')
 prediction = linear_model.predict_values('Date', new_ds)
 prediction.plot_data('Date', 'Rank_2', 'Prediction')
